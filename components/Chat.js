@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { GiftedChat } from "react-native-gifted-chat";
 
 export default function Chat(props) {
   let { name, color } = props.route.params;

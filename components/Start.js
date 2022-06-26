@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
+
 import BackgroundImage from "../img/Background_Image.png";
 
 // Create constant that holds background colors for Chat Screen
