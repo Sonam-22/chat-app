@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,95 +7,112 @@ import {
   Pressable,
   TouchableOpacity,
   ImageBackground,
-  Platform,
-  KeyboardAvoidingView,
+  ScrollView,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView,
   Keyboard,
+  Platform,
+  SafeAreaView,
 } from "react-native";
 
 import BackgroundImage from "../img/Background_Image.png";
 
 // Create constant that holds background colors for Chat Screen
-const colors = {
-  black: "#090C08",
-  purple: "#474056",
-  grey: "#8A95A5",
-  green: "#B9C6AE",
-};
+const colors = ["#090C08", "#474056", "#8A95A5", "#B9C6AE"];
 
 export default function Start(props) {
-  let [name, setName] = useState();
-  let [color, setColor] = useState();
+  const [name, setName] = useState();
+  const [color, setColor] = useState();
+  const scrollRef = useRef();
+  const [padding, setPadding] = useState(0);
 
-  // Setting default name and background color
-  // useEffect(() => {
-  //   setName('Your name...');
-  //   setColor(colors.black);
-  // }, [])
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      (e) => {
+        const padding = Platform.OS === "ios" ? e.endCoordinates.height : 1;
+        setPadding(padding);
+      }
+    );
+
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => setPadding(0)
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, [scrollRef, setPadding]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollToEnd({ animated: true });
+  }, [padding]);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.inner}>
-        <ImageBackground
-          source={BackgroundImage}
-          resizeMode="cover"
-          style={styles.image}
-        >
-          <Text style={styles.title}>Welcome to Chat</Text>
+    <TouchableWithoutFeedback
+      onPress={Keyboard.dismiss}
+      style={styles.container}
+    >
+      <ImageBackground
+        source={BackgroundImage}
+        resizeMode="cover"
+        style={styles.image}
+      >
+        <SafeAreaView style={styles.scrollViewContainer}>
+          <ScrollView ref={scrollRef}>
+            <View style={[{ paddingBottom: padding }, styles.scrollView]}>
+              <Text style={styles.title}>Welcome to Chat</Text>
+              <View style={styles.box}>
+                {/* Input box to set user name passed to chat screen */}
+                <TextInput
+                  onChangeText={(name) => setName(name)}
+                  value={name}
+                  style={styles.input}
+                  placeholder="Your name..."
+                />
 
-          <View style={styles.box}>
-            {/* Input box to set user name passed to chat screen */}
-            <TextInput
-              onChangeText={(name) => setName(name)}
-              value={name}
-              style={styles.input}
-              placeholder="Your name..."
-            />
+                {/* Allow user to choose a background color for the chat screen */}
+                <Text style={styles.text}>Choose Background Color:</Text>
+                <View style={styles.colorContainer}>
+                  {colors.map((c, i) =>
+                    c !== color ? (
+                      <TouchableOpacity
+                        key={i}
+                        style={[{ backgroundColor: c }, styles.colorbutton]}
+                        onPress={() => setColor(c)}
+                      />
+                    ) : (
+                      <View key={i} style={styles.colorbutton}>
+                        <Text>✔</Text>
+                      </View>
+                    )
+                  )}
+                </View>
 
-            {/* Allow user to choose a background color for the chat screen */}
-            <Text style={styles.text}>Choose Background Color:</Text>
-            <View style={styles.colorContainer}>
-              <TouchableOpacity
-                style={[{ backgroundColor: colors.black }, styles.colorbutton]}
-                onPress={() => setColor(colors.black)}
-              />
-              <TouchableOpacity
-                style={[{ backgroundColor: colors.purple }, styles.colorbutton]}
-                onPress={() => setColor(colors.purple)}
-              />
-              <TouchableOpacity
-                style={[{ backgroundColor: colors.grey }, styles.colorbutton]}
-                onPress={() => setColor(colors.grey)}
-              />
-              <TouchableOpacity
-                style={[{ backgroundColor: colors.green }, styles.colorbutton]}
-                onPress={() => setColor(colors.green)}
-              />
+                {/* Open chatroom, passing user name and background color as props */}
+                <Pressable
+                  onPress={() =>
+                    props.navigation.navigate("Chat", {
+                      name: name,
+                      color: color,
+                    })
+                  }
+                  style={({ pressed }) => [
+                    {
+                      backgroundColor: pressed ? "#585563" : "#757083",
+                    },
+                    styles.button,
+                  ]}
+                >
+                  <Text style={styles.buttontext}>Start Chatting</Text>
+                </Pressable>
+              </View>
             </View>
-
-            {/* Open chatroom, passing user name and background color as props */}
-            <Pressable
-              onPress={() =>
-                props.navigation.navigate("Chat", {
-                  name: name,
-                  color: color,
-                })
-              }
-              style={({ pressed }) => [
-                {
-                  backgroundColor: pressed ? "#585563" : "#757083",
-                },
-                styles.button,
-              ]}
-            >
-              <Text style={styles.buttontext}>Start Chatting</Text>
-            </Pressable>
-          </View>
-        </ImageBackground>
-        {Platform.OS === "ios" ? (
-          <KeyboardAvoidingView style={styles.container} behavior="height" />
-        ) : null}
-      </View>
+          </ScrollView>
+        </SafeAreaView>
+      </ImageBackground>
     </TouchableWithoutFeedback>
   );
 }
@@ -103,14 +120,27 @@ export default function Start(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-
-  inner: {
-    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center",
   },
 
   image: {
     flex: 1,
+    height: "100%",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+  },
+
+  scrollViewContainer: {
+    flex: 1,
+    minHeight: "100%",
+    width: "100%",
+  },
+
+  scrollView: {
+    flex: 1,
+    width: "100%",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "space-evenly",
@@ -119,6 +149,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 45,
     fontWeight: "600",
+    marginBottom: 40,
+    marginTop: 120,
     color: "#ffffff",
   },
 
@@ -126,8 +158,9 @@ const styles = StyleSheet.create({
     width: "88%",
     backgroundColor: "white",
     alignItems: "center",
-    height: "60%",
+    height: 300,
     justifyContent: "space-evenly",
+    marginBottom: 30,
   },
 
   input: {
@@ -157,6 +190,8 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   button: {

@@ -26,7 +26,7 @@ It is a chat app for mobile devices made with React Native. The app provides use
    and location data.
 4. Data gets stored online and offline.
 
-### Technical Requirements
+## Technical Requirements
 
 1. The app must be written in React Native.
 2. The app must be developed using Expo.
@@ -41,3 +41,22 @@ It is a chat app for mobile devices made with React Native. The app provides use
 11. Location data must be sent via the chat in a map view.
 12. The chat interface and functionality must be created using the Gifted Chat library.
 13. The app’s codebase must contain comments.
+
+## Tech Stack
+
+1. React Native
+2. React Navigation
+3. Gifted Chat
+4. Expo
+
+## How to use the app
+
+This app is not published to AppStore or PlayStore. In order to use this app, Please follow the steps mentioned below.
+
+1. Clone the repository.
+2. Run the command `$ npm install` to install all the requred depedencies.
+3. Install Android studio or Xcode to run the Android Phone and I Phone simulators.
+4. Download and configure the simulators as per your requirments.
+5. Once the simulators and up and running, you could start the expo server by running the command `$ npm start`
+6. This will start expo server and it will be available at [http://localhost:19002/](http://localhost:19002/). Open this link in your browser.
+7. Now you will see options to run the app on a IOS simulator or on an Android simulator using expo. Click on the inteded option and enjoy the app.
