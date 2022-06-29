@@ -9,12 +9,11 @@ import {
   ImageBackground,
   ScrollView,
   TouchableWithoutFeedback,
-  KeyboardAvoidingView,
   Keyboard,
   Platform,
   SafeAreaView,
 } from "react-native";
-
+import { getAuth, signInAnonymously } from "firebase/auth";
 import BackgroundImage from "../img/Background_Image.png";
 
 // Create constant that holds background colors for Chat Screen
@@ -49,6 +48,17 @@ export default function Start(props) {
   useEffect(() => {
     scrollRef.current?.scrollToEnd({ animated: true });
   }, [padding]);
+
+  const handlePressed = async () => {
+    const auth = await signInAnonymously(getAuth());
+    props.navigation.navigate("Chat", {
+      name: name,
+      color: color,
+      user: {
+        id: auth.user.uid,
+      },
+    });
+  };
 
   return (
     <TouchableWithoutFeedback
@@ -93,12 +103,7 @@ export default function Start(props) {
 
                 {/* Open chatroom, passing user name and background color as props */}
                 <Pressable
-                  onPress={() =>
-                    props.navigation.navigate("Chat", {
-                      name: name,
-                      color: color,
-                    })
-                  }
+                  onPress={handlePressed}
                   style={({ pressed }) => [
                     {
                       backgroundColor: pressed ? "#585563" : "#757083",

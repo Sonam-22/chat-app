@@ -1,4 +1,5 @@
 /// import the screens
+import "./app-firebase/firebase";
 import Start from "./components/Start";
 import Chat from "./components/Chat";
 
