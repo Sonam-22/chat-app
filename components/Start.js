@@ -13,17 +13,40 @@ import {
   Platform,
   SafeAreaView,
 } from "react-native";
-import { getAuth, signInAnonymously } from "firebase/auth";
+import { signInAnonymously } from "firebase/auth";
 import BackgroundImage from "../img/Background_Image.png";
+import NetInfo from "@react-native-community/netinfo";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { auth } from "../app-firebase/firebase";
 
 // Create constant that holds background colors for Chat Screen
 const colors = ["#090C08", "#474056", "#8A95A5", "#B9C6AE"];
+const USER_COLLECTION = "user";
 
 export default function Start(props) {
   const [name, setName] = useState();
   const [color, setColor] = useState();
   const scrollRef = useRef();
   const [padding, setPadding] = useState(0);
+
+  const getUser = async () => {
+    try {
+      const state = await NetInfo.fetch();
+      let credentials;
+      if (state.isConnected) {
+        credentials = await signInAnonymously(auth);
+        await AsyncStorage.setItem(
+          USER_COLLECTION,
+          JSON.stringify(credentials)
+        );
+      } else {
+        credentials = JSON.parse(await AsyncStorage.getItem(USER_COLLECTION));
+      }
+      return { id: credentials.user.uid };
+    } catch (error) {
+      console.log("Error saving copy of user in Async Storage", error.message);
+    }
+  };
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -50,13 +73,11 @@ export default function Start(props) {
   }, [padding]);
 
   const handlePressed = async () => {
-    const auth = await signInAnonymously(getAuth());
+    const user = await getUser();
     props.navigation.navigate("Chat", {
       name: name,
       color: color,
-      user: {
-        id: auth.user.uid,
-      },
+      user,
     });
   };
 

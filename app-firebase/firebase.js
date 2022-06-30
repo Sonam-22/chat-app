@@ -7,12 +7,12 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyD_VmRzHy4R_XWqRA4JUQhPZtHdGax3REo",
-  authDomain: "chatapp-b1244.firebaseapp.com",
-  projectId: "chatapp-b1244",
-  storageBucket: "chatapp-b1244.appspot.com",
-  messagingSenderId: "1059564144071",
-  appId: "1:1059564144071:web:b39815eae9b134832c05e2",
+  apiKey: "AIzaSyBtVJLFsucKgvnWkMvA3-lLYumsKxi-NV8",
+  authDomain: "chatapp-b1fe0.firebaseapp.com",
+  projectId: "chatapp-b1fe0",
+  storageBucket: "chatapp-b1fe0.appspot.com",
+  messagingSenderId: "370082511330",
+  appId: "1:370082511330:web:6751394838091ffc8e21bb",
 };
 
 export const firebaseApp = initializeApp(firebaseConfig);
