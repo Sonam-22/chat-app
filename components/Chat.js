@@ -68,21 +68,6 @@ export default function Chat(props) {
     system: true,
   });
 
-  const getMessagesFromFirestore = () => {
-    const messagesCollection = collection(db, COLLECTION_NAME);
-    addDoc(messagesCollection, systemMessageJoined());
-    const messagesQuery = query(
-      messagesCollection,
-      orderBy("createdAt", "desc")
-    );
-    const unsubscribeDb = onSnapshot(messagesQuery, fetchMessages);
-
-    return () => {
-      addDoc(messagesCollection, systemMessageLeft());
-      unsubscribeDb();
-    };
-  };
-
   // Set the screen title to the user name entered in the start screen
   useEffect(() => {
     props.navigation.setOptions({ title: name });
@@ -95,15 +80,36 @@ export default function Chat(props) {
   }, []);
 
   useEffect(() => {
-    const execute = async () => {
+    let didCancel = false;
+    const cleanUpOps = [];
+    const subscribeToDb = async () => {
       if (online) {
         await deleteMessages();
-        return getMessagesFromFirestore();
+        const messagesCollection = collection(db, COLLECTION_NAME);
+        await addDoc(messagesCollection, systemMessageJoined());
+        const messagesQuery = query(
+          messagesCollection,
+          orderBy("createdAt", "desc")
+        );
+        // Preventing memory leaks. Create subscription only if user is still there.
+        if (!didCancel) {
+          const unsubscribeDb = onSnapshot(messagesQuery, fetchMessages);
+          cleanUpOps.push(
+            () => addDoc(messagesCollection, systemMessageLeft()),
+            () => unsubscribeDb()
+          );
+        }
       } else {
         await getMessagesFromStorage();
       }
     };
-    execute();
+
+    subscribeToDb();
+
+    return () => {
+      didCancel = true;
+      cleanUpOps.forEach((op) => op());
+    };
   }, [online]);
 
   //Fecth messages from DB and setState
