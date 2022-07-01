@@ -2,9 +2,8 @@
 
 It is a chat app for mobile devices made with React Native. The app provides users with a chat interface and options to share images and their location.
 
-![Chat Home](./doc/chat-screen.png)
-
-![Chat Screen](./doc/chat-home.png)
+<img src="./doc/chat-home.png" alt="Chat Home" style="width:200px; margin-right: 20px"/>
+<img src="./doc/chat-screen.png" alt="Chat Screen" style="width:200px;"/>
 
 ## Features
 
