@@ -2,6 +2,10 @@
 
 It is a chat app for mobile devices made with React Native. The app provides users with a chat interface and options to share images and their location.
 
+![Chat Home](./doc/chat-screen.png)
+
+![Chat Screen](./doc/chat-home.png)
+
 ## Features
 
 ### User Stories
@@ -48,15 +52,23 @@ It is a chat app for mobile devices made with React Native. The app provides use
 2. React Navigation
 3. Gifted Chat
 4. Expo
+5. Google Firebase
+
+## Database configuration
+
+This app uses Firebase firstore as database and firebase storage as object store to keep media related stuffs.
+Messages are stored in messages collection of firestore and images are stored in images folder of firebase storage.
+
+When you run this app with your firestore, you will need to setup messages collection and images folder in your firestore and firebase storage respectively.
 
 ## How to use the app
 
 This app is not published to AppStore or PlayStore. In order to use this app, Please follow the steps mentioned below.
 
 1. Clone the repository.
-2. Run the command `$ npm install` to install all the requred depedencies.
+2. Run the command `$ npm install` to install all the required depedencies.
 3. Install Android studio or Xcode to run the Android Phone and I Phone simulators.
 4. Download and configure the simulators as per your requirments.
-5. Once the simulators and up and running, you could start the expo server by running the command `$ npm start`
+5. Once the simulators is up and running, you could start the expo server by running the command `$ npm start`
 6. This will start expo server and it will be available at [http://localhost:19002/](http://localhost:19002/). Open this link in your browser.
 7. Now you will see options to run the app on a IOS simulator or on an Android simulator using expo. Click on the inteded option and enjoy the app.

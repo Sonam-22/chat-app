@@ -12,6 +12,8 @@ import { db } from "../app-firebase/firebase";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
+import CustomActions from "./CustomActions";
+import MapView from "react-native-maps";
 
 /**
  * Reference of the messages collection.
@@ -148,12 +150,38 @@ export default function Chat(props) {
     );
   };
 
+  //Custom Map View
+  const renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={{
+            width: 150,
+            height: 100,
+            borderRadius: 13,
+            margin: 3,
+          }}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    return null;
+  };
+
   return (
     <View style={[{ backgroundColor: color }, styles.container]}>
       <GiftedChat
         renderBubble={renderBubble.bind()}
         messages={messages}
         onSend={(messages) => onSend(messages)}
+        renderCustomView={renderCustomView}
+        renderActions={(props) => <CustomActions {...props} />}
         renderInputToolbar={(props) => online && <InputToolbar {...props} />}
         user={{
           _id: user.id,
